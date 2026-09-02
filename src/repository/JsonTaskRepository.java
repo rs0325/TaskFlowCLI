@@ -2,6 +2,7 @@ package repository;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -88,6 +89,59 @@ public class JsonTaskRepository {
         }
 
         return new LoadAllResult.Success(tasks);
+    }
+
+    public SaveResult save(Task task) {
+        File directory = new File(FILE_DIR);
+
+        try {
+            if (!directory.exists() && !directory.mkdirs()) {
+                return new SaveResult.Failure(
+                        SaveError.DIRECTORY_CREATE_FAILED
+                );
+            }
+
+            File file = new File(directory, fileName(task));
+
+            try (FileWriter writer = new FileWriter(file)) {
+                gson.toJson(task, writer);
+                return new SaveResult.Success();
+            }
+        } catch (IOException e) {
+            return new SaveResult.Failure(
+                    SaveError.IO_ERROR
+            );
+        } catch (SecurityException e) {
+            return new SaveResult.Failure(
+                    SaveError.ACCESS_DENIED
+            );
+        }
+    }
+
+    public SaveAllResult saveAll(List<Task> tasks) {
+        for (Task task : tasks) {
+            SaveResult result = save(task);
+
+            if (result instanceof SaveResult.Failure failure) {
+                if (failure.error() == SaveError.DIRECTORY_CREATE_FAILED) {
+                    return new SaveAllResult.Failure(
+                            failure.error(),
+                            null
+                    );
+                }
+
+                return new SaveAllResult.Failure(
+                        failure.error(),
+                        fileName(task)
+                );
+            }
+        }
+
+        return new SaveAllResult.Success();
+    }
+
+    private static String fileName(Task task) {
+        return task.getId() + ".json";
     }
 }	
 
