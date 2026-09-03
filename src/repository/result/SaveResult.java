@@ -1,4 +1,4 @@
-package repository;
+package repository.result;
 
 public sealed interface SaveResult permits SaveResult.Success, SaveResult.Failure {
 

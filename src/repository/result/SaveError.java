@@ -1,4 +1,4 @@
-package repository;
+package repository.result;
 
 public enum SaveError {
     IO_ERROR("ファイルの保存に失敗しました。"),

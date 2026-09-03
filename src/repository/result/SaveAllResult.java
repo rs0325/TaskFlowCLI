@@ -1,4 +1,4 @@
-package repository;
+package repository.result;
 
 import org.eclipse.jdt.annotation.Nullable;
 

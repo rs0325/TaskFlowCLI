@@ -1,4 +1,4 @@
-package repository;
+package repository.result;
 
 public enum LoadError {
     FILE_NOT_FOUND("ファイルまたはディレクトリが存在しません。"),

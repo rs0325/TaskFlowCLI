@@ -14,6 +14,13 @@ import com.google.gson.reflect.TypeToken;
 
 import model.Task;
 
+import repository.result.LoadAllResult;
+import repository.result.LoadError;
+import repository.result.LoadResult;
+import repository.result.SaveAllResult;
+import repository.result.SaveError;
+import repository.result.SaveResult;
+
 public class JsonTaskRepository {
 	private static final String FILE_DIR = "data";
 	
