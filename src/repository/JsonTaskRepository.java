@@ -23,11 +23,12 @@ import repository.result.SaveAllResult;
 import repository.result.SaveError;
 import repository.result.SaveResult;
 
-public class JsonTaskRepository {
+public class JsonTaskRepository implements TaskRepository {
 	private static final String FILE_DIR = "data";
 	
 	private static final Gson gson = new Gson();
 	
+    @Override
     public LoadResult load(String fileName) {
         File file = new File(FILE_DIR + "/" + fileName);
 
@@ -54,6 +55,7 @@ public class JsonTaskRepository {
         }
     }
     
+    @Override
     public LoadAllResult loadAll() {
     	File directory = new File(FILE_DIR);
     	
@@ -100,6 +102,7 @@ public class JsonTaskRepository {
         return new LoadAllResult.Success(tasks);
     }
 
+    @Override
     public SaveResult save(Task task) {
         File directory = new File(FILE_DIR);
 
@@ -127,6 +130,7 @@ public class JsonTaskRepository {
         }
     }
 
+    @Override
     public SaveAllResult saveAll(List<Task> tasks) {
         for (Task task : tasks) {
             SaveResult result = save(task);
@@ -149,6 +153,7 @@ public class JsonTaskRepository {
         return new SaveAllResult.Success();
     }
 
+    @Override
     public DeleteResult delete(long id) {
         try {
             File file = new File(FILE_DIR + "/" + fileName(id));
