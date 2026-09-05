@@ -16,6 +16,7 @@ public class Task {
 	private LocalDate dueDate;
 	private List<String> tags;
 	private LocalDateTime createdAt;
+	@Nullable
 	private LocalDateTime completedAt;
 
 	public long getId() {
@@ -42,8 +43,29 @@ public class Task {
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
+	@Nullable
 	public LocalDateTime getCompletedAt() {
 		return completedAt;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public void setDueDate(@Nullable LocalDate dueDate) {
+		this.dueDate = dueDate;
+	}
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+	public void setStatus(TaskStatus status) {
+		this.status = status;
+		this.completedAt = status == TaskStatus.DONE ? LocalDateTime.now() : null;
 	}
 
 	public Task(
@@ -56,6 +78,7 @@ public class Task {
 			LocalDate dueDate,
 			List<String> tags,
 			LocalDateTime createdAt,
+			@Nullable
 			LocalDateTime completedAt
 			) {
 		super();
