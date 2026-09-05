@@ -14,6 +14,8 @@ import com.google.gson.reflect.TypeToken;
 
 import model.Task;
 
+import repository.result.DeleteError;
+import repository.result.DeleteResult;
 import repository.result.LoadAllResult;
 import repository.result.LoadError;
 import repository.result.LoadResult;
@@ -108,7 +110,7 @@ public class JsonTaskRepository {
                 );
             }
 
-            File file = new File(directory, fileName(task));
+            File file = new File(directory, fileName(task.getId()));
 
             try (FileWriter writer = new FileWriter(file)) {
                 gson.toJson(task, writer);
@@ -139,7 +141,7 @@ public class JsonTaskRepository {
 
                 return new SaveAllResult.Failure(
                         failure.error(),
-                        fileName(task)
+                        fileName(task.getId())
                 );
             }
         }
@@ -147,8 +149,30 @@ public class JsonTaskRepository {
         return new SaveAllResult.Success();
     }
 
-    private static String fileName(Task task) {
-        return task.getId() + ".json";
+    public DeleteResult delete(long id) {
+        try {
+            File file = new File(FILE_DIR + "/" + fileName(id));
+
+            if (!file.exists()) {
+                return new DeleteResult.NotExits();
+            }
+
+            if (!file.delete()) {
+                return new DeleteResult.Failure(
+                        DeleteError.IO_ERROR
+                );
+            }
+
+            return new DeleteResult.Success();
+        } catch (SecurityException e) {
+            return new DeleteResult.Failure(
+                    DeleteError.ACCESS_DENIED
+            );
+        }
+    }
+
+    private static String fileName(long id) {
+        return id + ".json";
     }
 }	
 
