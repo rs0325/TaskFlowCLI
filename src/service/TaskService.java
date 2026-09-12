@@ -62,6 +62,18 @@ public class TaskService {
         return List.copyOf(tasks);
     }
 
+    public List<Task> find(TaskFilter filter) {
+        List<Task> matched = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (filter.matches(task)) {
+                matched.add(task);
+            }
+        }
+
+        return List.copyOf(matched);
+    }
+
     public Optional<Task> findById(long id) {
         int index = indexOf(id);
 
