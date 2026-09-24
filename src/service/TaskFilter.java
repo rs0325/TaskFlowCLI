@@ -19,20 +19,20 @@ public record TaskFilter(
     }
 
     public boolean matches(Task task) {
-        if (tag != null && !task.getTags().contains(tag)) {
+        if (tag != null && !task.tags().contains(tag)) {
             return false;
         }
 
-        if (status != null && task.getStatus() != status) {
+        if (status != null && task.status() != status) {
             return false;
         }
 
-        if (priority != null && task.getPriority() != priority) {
+        if (priority != null && task.priority() != priority) {
             return false;
         }
 
         if (dueBy != null) {
-            LocalDate dueDate = task.getDueDate();
+            LocalDate dueDate = task.dueDate();
 
             if (dueDate == null || dueDate.isAfter(dueBy)) {
                 return false;
