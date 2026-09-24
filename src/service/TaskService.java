@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -26,6 +26,7 @@ public class TaskService {
 
     public TaskService(TaskRepository repository, List<Task> tasks) {
         this.repository = repository;
+        // 登録・更新・削除で一覧を変更するため、変更可能なリストとして保持する
         this.tasks = new ArrayList<>(tasks);
     }
 
@@ -63,15 +64,9 @@ public class TaskService {
     }
 
     public List<Task> find(TaskFilter filter) {
-        List<Task> matched = new ArrayList<>();
-
-        for (Task task : tasks) {
-            if (filter.matches(task)) {
-                matched.add(task);
-            }
-        }
-
-        return List.copyOf(matched);
+        return tasks.stream()
+                .filter(filter::matches)
+                .toList();
     }
 
     public Optional<Task> findById(long id) {
@@ -85,7 +80,7 @@ public class TaskService {
     }
 
     public TaskUpdateResult changeStatus(long id, TaskStatus status) {
-        return update(id, task -> task.setStatus(status));
+        return update(id, task -> task.withStatus(status));
     }
 
     public TaskUpdateResult edit(
@@ -95,13 +90,7 @@ public class TaskService {
             Priority priority,
             @Nullable LocalDate dueDate,
             List<String> tags) {
-        return update(id, task -> {
-            task.setTitle(title);
-            task.setDescription(description);
-            task.setPriority(priority);
-            task.setDueDate(dueDate);
-            task.setTags(tags);
-        });
+        return update(id, task -> task.withContent(title, description, priority, dueDate, tags));
     }
 
     public TaskDeleteResult delete(long id) {
@@ -122,15 +111,14 @@ public class TaskService {
         return new TaskDeleteResult.Success();
     }
 
-    private TaskUpdateResult update(long id, Consumer<Task> updater) {
+    private TaskUpdateResult update(long id, UnaryOperator<Task> updater) {
         int index = indexOf(id);
 
         if (index < 0) {
             return new TaskUpdateResult.NotFound();
         }
 
-        Task updated = copyOf(tasks.get(index));
-        updater.accept(updated);
+        Task updated = updater.apply(tasks.get(index));
 
         SaveResult result = repository.save(updated);
 
@@ -145,7 +133,7 @@ public class TaskService {
 
     private int indexOf(long id) {
         for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getId() == id) {
+            if (tasks.get(i).id() == id) {
                 return i;
             }
         }
@@ -153,26 +141,12 @@ public class TaskService {
         return -1;
     }
 
-    private static Task copyOf(Task task) {
-        return new Task(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getStatus(),
-                task.getPriority(),
-                task.getDueDate(),
-                task.getTags(),
-                task.getCreatedAt(),
-                task.getCompletedAt()
-        );
-    }
-
     private long nextId() {
         long maxId = 0;
 
         for (Task task : tasks) {
-            if (task.getId() > maxId) {
-                maxId = task.getId();
+            if (task.id() > maxId) {
+                maxId = task.id();
             }
         }
 

@@ -113,7 +113,7 @@ public class JsonTaskRepository implements TaskRepository {
                 );
             }
 
-            File file = new File(directory, fileName(task.getId()));
+            File file = new File(directory, fileName(task.id()));
 
             try (FileWriter writer = new FileWriter(file)) {
                 gson.toJson(task, writer);
@@ -145,7 +145,7 @@ public class JsonTaskRepository implements TaskRepository {
 
                 return new SaveAllResult.Failure(
                         failure.error(),
-                        fileName(task.getId())
+                        fileName(task.id())
                 );
             }
         }

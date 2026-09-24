@@ -110,10 +110,10 @@ public class TaskCli {
         // 桁をそろえるとフォントによって崩れるため、項目名を添えて1行で表示する
         for (Task task : tasks) {
             out.println(String.join(" / ",
-                    "[" + task.getId() + "] " + task.getStatus().display,
-                    "優先度: " + task.getPriority().display,
-                    task.getTitle(),
-                    "期限: " + formatDate(task.getDueDate())
+                    "[" + task.id() + "] " + task.status().display,
+                    "優先度: " + task.priority().display,
+                    task.title(),
+                    "期限: " + formatDate(task.dueDate())
             ));
         }
     }
@@ -128,15 +128,15 @@ public class TaskCli {
 
         Task task = found.get();
 
-        out.println("ID: " + task.getId());
-        out.println("タイトル: " + task.getTitle());
-        out.println("説明: " + task.getDescription());
-        out.println("状態: " + task.getStatus().display);
-        out.println("優先度: " + task.getPriority().display);
-        out.println("期限: " + formatDate(task.getDueDate()));
-        out.println("タグ: " + String.join(", ", task.getTags()));
-        out.println("作成日時: " + formatDateTime(task.getCreatedAt()));
-        out.println("完了日時: " + formatDateTime(task.getCompletedAt()));
+        out.println("ID: " + task.id());
+        out.println("タイトル: " + task.title());
+        out.println("説明: " + task.description());
+        out.println("状態: " + task.status().display);
+        out.println("優先度: " + task.priority().display);
+        out.println("期限: " + formatDate(task.dueDate()));
+        out.println("タグ: " + String.join(", ", task.tags()));
+        out.println("作成日時: " + formatDateTime(task.createdAt()));
+        out.println("完了日時: " + formatDateTime(task.completedAt()));
     }
 
     private void edit(long id) {
