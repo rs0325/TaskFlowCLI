@@ -16,9 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import model.Priority;
 import model.Task;
 import model.TaskStatus;
-
 import repository.result.SaveResult;
-
 import service.TaskFilter;
 import service.TaskService;
 import service.result.TaskDeleteResult;
@@ -109,15 +107,13 @@ public class TaskCli {
             return;
         }
 
-        out.println("ID | 状態 | 優先度 | タイトル | 期限");
-
+        // 桁をそろえるとフォントによって崩れるため、項目名を添えて1行で表示する
         for (Task task : tasks) {
-            out.println(String.join(" | ",
-                    String.valueOf(task.getId()),
-                    task.getStatus().display,
-                    task.getPriority().display,
+            out.println(String.join(" / ",
+                    "[" + task.getId() + "] " + task.getStatus().display,
+                    "優先度: " + task.getPriority().display,
                     task.getTitle(),
-                    formatDate(task.getDueDate())
+                    "期限: " + formatDate(task.getDueDate())
             ));
         }
     }
@@ -291,10 +287,10 @@ public class TaskCli {
     }
 
     private static String formatDate(@Nullable LocalDate date) {
-        return date == null ? "" : date.toString();
+        return date == null ? "なし" : date.toString();
     }
 
     private static String formatDateTime(@Nullable LocalDateTime dateTime) {
-        return dateTime == null ? "" : dateTime.format(DATE_TIME_FORMAT);
+        return dateTime == null ? "なし" : dateTime.format(DATE_TIME_FORMAT);
     }
 }
