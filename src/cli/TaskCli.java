@@ -58,16 +58,20 @@ public class TaskCli {
 
         Command command = ((ParseResult.Success) result).command();
 
-        switch (command) {
-            case Command.Add add -> add();
-            case Command.List list -> list(list.tag());
-            case Command.Show show -> show(show.id());
-            case Command.Edit edit -> edit(edit.id());
-            case Command.Done done -> done(done.id());
-            case Command.Delete delete -> delete(delete.id());
-            case Command.Exit exit -> {
-                return false;
-            }
+        if (command instanceof Command.Add) {
+            add();
+        } else if (command instanceof Command.List list) {
+            list(list.tag());
+        } else if (command instanceof Command.Show show) {
+            show(show.id());
+        } else if (command instanceof Command.Edit edit) {
+            edit(edit.id());
+        } else if (command instanceof Command.Done done) {
+            done(done.id());
+        } else if (command instanceof Command.Delete delete) {
+            delete(delete.id());
+        } else if (command instanceof Command.Exit) {
+            return false;
         }
 
         return true;
@@ -173,18 +177,22 @@ public class TaskCli {
     private void delete(long id) {
         TaskDeleteResult result = service.delete(id);
 
-        switch (result) {
-            case TaskDeleteResult.Success success -> out.println("タスクを削除しました。");
-            case TaskDeleteResult.NotFound notFound -> printNotFound(id);
-            case TaskDeleteResult.Failure failure -> out.println(failure.error().getMessage());
+        if (result instanceof TaskDeleteResult.Success) {
+            out.println("タスクを削除しました。");
+        } else if (result instanceof TaskDeleteResult.NotFound) {
+            printNotFound(id);
+        } else if (result instanceof TaskDeleteResult.Failure failure) {
+            out.println(failure.error().getMessage());
         }
     }
 
     private void printUpdateResult(long id, TaskUpdateResult result, String successMessage) {
-        switch (result) {
-            case TaskUpdateResult.Success success -> out.println(successMessage);
-            case TaskUpdateResult.NotFound notFound -> printNotFound(id);
-            case TaskUpdateResult.Failure failure -> out.println(failure.error().getMessage());
+        if (result instanceof TaskUpdateResult.Success) {
+            out.println(successMessage);
+        } else if (result instanceof TaskUpdateResult.NotFound) {
+            printNotFound(id);
+        } else if (result instanceof TaskUpdateResult.Failure failure) {
+            out.println(failure.error().getMessage());
         }
     }
 

@@ -43,19 +43,23 @@ public class Main {
     private static @Nullable List<Task> loadTasks(TaskRepository repository) {
         LoadAllResult result = repository.loadAll();
 
-        return switch (result) {
-            case LoadAllResult.Success success -> success.tasks();
-            case LoadAllResult.NotExits notExits -> List.of();
-            case LoadAllResult.Failure failure -> {
-                System.out.println(failure.error().getMessage());
+        if (result instanceof LoadAllResult.Success success) {
+            return success.tasks();
+        }
 
-                if (failure.fileName() != null) {
-                    System.out.println("対象ファイル: " + failure.fileName());
-                }
+        if (result instanceof LoadAllResult.NotExits) {
+            return List.of();
+        }
 
-                yield null;
-            }
-        };
+        LoadAllResult.Failure failure = (LoadAllResult.Failure) result;
+
+        System.out.println(failure.error().getMessage());
+
+        if (failure.fileName() != null) {
+            System.out.println("対象ファイル: " + failure.fileName());
+        }
+
+        return null;
     }
 
     private static void runLoop(TaskCli cli) {
